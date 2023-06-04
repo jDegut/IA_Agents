@@ -42,6 +42,9 @@ public class Astar {
     }
 
     private Node backPropagate(Node node) {
+        if(node.getParent() == null) {
+            return node;
+        }
         if(node.getParent().getParent() == null) {
             return node;
         }

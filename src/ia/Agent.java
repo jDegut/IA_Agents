@@ -6,7 +6,10 @@ import game.Box;
 import game.Direction;
 import game.Move;
 
+import java.util.List;
 public class Agent implements Runnable {
+
+    public static final List<String> AGENT_LABELS = List.of("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
     private static int idCounter = 0;
     private final int id;
@@ -52,10 +55,6 @@ public class Agent implements Runnable {
         return yFinal;
     }
 
-    public boolean isTerminal() {
-        return isTerminal;
-    }
-
     public void setTerminal(boolean terminal) {
         isTerminal = terminal;
     }
@@ -66,7 +65,7 @@ public class Agent implements Runnable {
         Astar astar;
         while (!isTerminal) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -76,6 +75,7 @@ public class Agent implements Runnable {
                 astar = new Astar(new Node(box.getX(), box.getY()));
                 dir = astar.findPath(board, new Node(xFinal, yFinal));
             }
+            System.out.println("Agent " + name + " moving " + dir);
             sendEvent(new Move(this, dir));
         }
     }

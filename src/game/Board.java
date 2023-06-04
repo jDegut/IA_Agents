@@ -104,6 +104,10 @@ public class Board implements EventListener {
         return map.get(agent);
     }
 
+    public boolean isEmpty(Box box) {
+        return !map.containsValue(box);
+    }
+
     @Override
     public void onEventOccured(Event event) {
         if(event instanceof Move move) {
