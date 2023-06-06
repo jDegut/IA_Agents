@@ -74,6 +74,8 @@ public class Agent implements Runnable {
                 box = board.getPosition(this);
                 astar = new Astar(new Node(box.getX(), box.getY()));
                 dir = astar.findPath(board, new Node(xFinal, yFinal));
+                if(dir == Direction.NONE)
+                    dir = board.getNearestEmptyDirection(this);
             }
             System.out.println("Agent " + name + " moving " + dir);
             sendEvent(new Move(this, dir));

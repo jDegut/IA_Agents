@@ -11,6 +11,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Game extends JFrame {
+
+    private static final List<Agent> agents = List.of(
+            new Agent("A", 0, 0),
+            new Agent("B", 0, 4)
+    );
+
+    private static final List<Box> boxes = List.of(
+            new Box(0, 4),
+            new Box(0, 0)
+    );
     private static final int CELL_SIZE = 100;
 
     private final Board board;
@@ -20,7 +30,7 @@ public class Game extends JFrame {
 
     public Game() {
         this.board = new Board(this);
-        executor = Executors.newFixedThreadPool(3);
+        executor = Executors.newFixedThreadPool(4);
         setTitle("Board");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -28,6 +38,7 @@ public class Game extends JFrame {
         pack();
         setLocationRelativeTo(null);
         this.setVisible(true);
+
         start();
         updateAgents();
     }
@@ -42,10 +53,14 @@ public class Game extends JFrame {
                 JPanel cellPanel = new JPanel();
                 cellPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 cellPanel.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
+                for(Agent agent : agents) {
+                    if(agent.getXFinal() == j && agent.getYFinal() == i) {
+                        cellPanel.setBackground(getLabelColor(agent));
+                    }
+                }
                 gridPanel.add(cellPanel);
             }
         }
-
         getContentPane().add(gridPanel);
     }
 
@@ -56,7 +71,6 @@ public class Game extends JFrame {
         for (Component component : gridPanel.getComponents()) {
             if (component instanceof JPanel cellPanel) {
                 SwingUtilities.invokeLater(cellPanel::removeAll);
-                cellPanel.setBackground(Color.WHITE); // Réinitialise la couleur de fond de toutes les cellules à blanc
             }
         }
 
@@ -67,12 +81,12 @@ public class Game extends JFrame {
                 int cellIndex = position.getX() + position.getY() * Board.BOARD_HEIGHT;
                 JPanel cellPanel = (JPanel) gridPanel.getComponent(cellIndex);
                 JLabel agentLabel = new JLabel(agent.getName());
-
                 // Vérifie si l'agent est sur sa case finale
-                if (position.getX() == agent.getXFinal() && position.getY() == agent.getYFinal()) {
-                    cellPanel.setBackground(getLabelColor(agent));
+                if (position.getX() == agent.getXFinal() && position.getY() == agent.getYFinal())
                     agentLabel.setForeground(Color.BLACK); // Change la couleur du texte en noir
-                }
+                else
+                    agentLabel.setForeground(getLabelColor(agent));
+
                 agentLabel.setFont(agentLabel.getFont().deriveFont(16f));
                 cellPanel.setLayout(new GridBagLayout());
                 GridBagConstraints gbc = new GridBagConstraints();
@@ -84,6 +98,7 @@ public class Game extends JFrame {
                 SwingUtilities.invokeLater(() -> cellPanel.add(agentLabel));
             }
         }
+
 
         SwingUtilities.invokeLater(() -> {
             revalidate();
@@ -97,17 +112,6 @@ public class Game extends JFrame {
     }
 
     public void start() {
-        List<Agent> agents = List.of(
-                new Agent("A", 0, 0),
-                new Agent("B", 0, 1),
-                new Agent("C", 0, 2)
-        );
-
-        List<Box> boxes = List.of(
-                new Box(4, 4),
-                new Box(2, 1),
-                new Box(4, 0)
-        );
         for(Agent agent : agents) {
             agent.setListener(board);
             board.addAgent(agent, boxes.get(agent.getId()));

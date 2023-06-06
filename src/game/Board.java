@@ -104,8 +104,14 @@ public class Board implements EventListener {
         return map.get(agent);
     }
 
-    public boolean isEmpty(Box box) {
-        return !map.containsValue(box);
+    public Direction getNearestEmptyDirection(Agent agent) {
+        Box box = map.get(agent);
+        List<Node> neighbors = generateNeighbors(new Node(box.getX(), box.getY(), 0, 0, null, Direction.NONE));
+        return neighbors.stream().min((n1, n2) -> {
+            int d1 = Math.abs(n1.getX() - agent.getXFinal()) + Math.abs(n1.getY() - agent.getYFinal());
+            int d2 = Math.abs(n2.getX() - agent.getXFinal()) + Math.abs(n2.getY() - agent.getYFinal());
+            return Integer.compare(d1, d2);
+        }).orElseThrow().getDir();
     }
 
     @Override
