@@ -4,13 +4,14 @@ import event.Event;
 import event.EventException;
 import event.EventListener;
 import ia.Agent;
-import ia.Astar;
+import ia.Agent1;
+import ia.Agent2;
 import ia.Node;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Board implements EventListener {
@@ -47,6 +48,17 @@ public class Board implements EventListener {
             }
             System.out.print("\n");
         }
+    }
+
+    public Map<Box, Direction> getAllNeighbors(Box box) {
+        Map<Box, Direction> neighbors = new HashMap<>();
+        int x_ = box.getX();
+        int y_ = box.getY();
+        if(y_ - 1 >= 0) neighbors.put(new Box(x_, y_ - 1), Direction.UP);
+        if(y_ + 1 < BOARD_HEIGHT) neighbors.put(new Box(x_, y_ + 1), Direction.DOWN);
+        if(x_ - 1 >= 0) neighbors.put(new Box(x_ - 1, y_), Direction.LEFT);
+        if(x_ + 1 < BOARD_SIZE) neighbors.put(new Box(x_ + 1, y_), Direction.RIGHT);
+        return neighbors;
     }
 
     public List<Node> generateNeighbors(Node node) {
@@ -86,18 +98,11 @@ public class Board implements EventListener {
         agent.setTerminal(agent.getXFinal() == box.getX() && agent.getYFinal() == box.getY());
     }
 
-    public List<Direction> getLegalMoves(Agent agent) {
-        List<Direction> legalMoves = new ArrayList<>();
+    public Direction getBestDirection(Agent agent) {
         Box box = map.get(agent);
-        if(box.getY() - 1 >= 0)
-            legalMoves.add(Direction.UP);
-        if(box.getY() + 1 < BOARD_HEIGHT)
-            legalMoves.add(Direction.DOWN);
-        if(box.getX() - 1 >= 0)
-            legalMoves.add(Direction.LEFT);
-        if(box.getX() + 1 < BOARD_SIZE)
-            legalMoves.add(Direction.RIGHT);
-        return legalMoves;
+        Map<Box, Direction> neighbors = getAllNeighbors(box);
+        return neighbors.get(neighbors.keySet().stream()
+                .min(Box::distance).orElseThrow());
     }
 
     public Box getPosition(Agent agent) {

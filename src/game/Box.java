@@ -27,6 +27,10 @@ public class Box {
         return y;
     }
 
+    public int distance(Box box) {
+        return Math.abs(getX() - box.getX()) + Math.abs(getY() - box.getY());
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(x, y);

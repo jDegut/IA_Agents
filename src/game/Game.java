@@ -1,23 +1,22 @@
 package game;
 
 import ia.Agent;
+import ia.Agent1;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Game extends JFrame {
 
-    private static final List<Agent> agents = List.of(
-            new Agent("A", 0, 0),
-            new Agent("B", 0, 4)
+    private static final List<Agent> AGENTS = List.of(
+            new Agent1("A", 0, 0),
+            new Agent1("B", 0, 4)
     );
 
-    private static final List<Box> boxes = List.of(
+    private static final List<Box> BOXES = List.of(
             new Box(0, 4),
             new Box(0, 0)
     );
@@ -53,7 +52,7 @@ public class Game extends JFrame {
                 JPanel cellPanel = new JPanel();
                 cellPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 cellPanel.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
-                for(Agent agent : agents) {
+                for(Agent agent : AGENTS) {
                     if(agent.getXFinal() == j && agent.getYFinal() == i) {
                         cellPanel.setBackground(getLabelColor(agent));
                     }
@@ -74,14 +73,14 @@ public class Game extends JFrame {
             }
         }
 
-        // Add agents to the grid
+        // Add AGENT_1s to the grid
         for (Agent agent : agents) {
             Box position = board.getPosition(agent);
             if (position != null) {
                 int cellIndex = position.getX() + position.getY() * Board.BOARD_HEIGHT;
                 JPanel cellPanel = (JPanel) gridPanel.getComponent(cellIndex);
                 JLabel agentLabel = new JLabel(agent.getName());
-                // Vérifie si l'agent est sur sa case finale
+                // Vérifie si l'agent1 est sur sa case finale
                 if (position.getX() == agent.getXFinal() && position.getY() == agent.getYFinal())
                     agentLabel.setForeground(Color.BLACK); // Change la couleur du texte en noir
                 else
@@ -112,13 +111,13 @@ public class Game extends JFrame {
     }
 
     public void start() {
-        for(Agent agent : agents) {
+        for(Agent agent : AGENTS) {
             agent.setListener(board);
-            board.addAgent(agent, boxes.get(agent.getId()));
+            board.addAgent(agent, BOXES.get(agent.getId()));
             System.out.println(agent.getName() + " have to go to " + agent.getXFinal() + ", " + agent.getYFinal());
         }
 
-        for(Agent agent : agents) {
+        for(Agent agent : AGENTS) {
             executor.execute(agent);
         }
     }
