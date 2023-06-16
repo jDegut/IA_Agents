@@ -87,6 +87,12 @@ public class Board implements EventListener {
         Direction dir = move.getDirection();
         if(dir == Direction.NONE) return;
         Box old = map.get(agent);
+        Box box = getBoxDirected(dir, old);
+        map.replace(move.getAgent(), box);
+        agent.setTerminal(agent.getXFinal() == box.getX() && agent.getYFinal() == box.getY());
+    }
+
+    public Box getBoxDirected(Direction dir, Box old) {
         Box box = null;
         switch (dir) {
             case UP -> box = new Box(old.getX(), old.getY() - 1);
@@ -94,8 +100,7 @@ public class Board implements EventListener {
             case LEFT -> box = new Box(old.getX() - 1, old.getY());
             case RIGHT -> box = new Box(old.getX() + 1, old.getY());
         }
-        map.replace(move.getAgent(), box);
-        agent.setTerminal(agent.getXFinal() == box.getX() && agent.getYFinal() == box.getY());
+        return box;
     }
 
     public Direction getBestDirection(Agent agent) {
@@ -107,6 +112,14 @@ public class Board implements EventListener {
 
     public Box getPosition(Agent agent) {
         return map.get(agent);
+    }
+
+    public Agent getAgent(Box box) {
+        for(Agent a : map.keySet()) {
+            if(map.get(a).equals(box))
+                return a;
+        }
+        return null;
     }
 
     public Direction getNearestEmptyDirection(Agent agent) {

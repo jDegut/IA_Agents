@@ -1,21 +1,22 @@
 package game;
 
 import event.Event;
+import ia.Agent;
 import ia.Agent1;
 
 public class Move implements Event {
 
-    private final Agent1 agent1;
+    private final Agent agent;
     private Direction dir;
 
 
-    public Move(Agent1 agent1, Direction dir) {
-        this.agent1 = agent1;
+    public Move(Agent agent1, Direction dir) {
+        this.agent = agent1;
         this.dir = dir;
     }
 
-    public Agent1 getAgent() {
-        return agent1;
+    public Agent getAgent() {
+        return agent;
     }
 
     public Direction getDirection() {

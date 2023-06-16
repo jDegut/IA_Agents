@@ -2,6 +2,7 @@ package game;
 
 import ia.Agent;
 import ia.Agent1;
+import ia.Agent2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,8 +13,10 @@ import java.util.concurrent.Executors;
 public class Game extends JFrame {
 
     private static final List<Agent> AGENTS = List.of(
-            new Agent1("A", 0, 0),
-            new Agent1("B", 0, 4)
+//            new Agent1("A", 0, 0),
+//            new Agent1("B", 0, 4)
+            new Agent2("A", 0, 0),
+            new Agent2("B", 0, 4)
     );
 
     private static final List<Box> BOXES = List.of(
