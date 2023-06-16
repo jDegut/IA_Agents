@@ -3,16 +3,11 @@ package game;
 import event.Event;
 import event.EventException;
 import event.EventListener;
-import ia.Agent;
-import ia.Agent1;
-import ia.Agent2;
-import ia.Node;
+import ia.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Board implements EventListener {
 
@@ -20,11 +15,14 @@ public class Board implements EventListener {
     public static final int BOARD_HEIGHT = 5;
 
     private final Game game;
-    private final ConcurrentHashMap<Agent,Box> map;
+    private final Map<Agent,Box> map;
+
+    private final Map<Agent, Queue<Request>> requests;
 
     public Board(Game game) {
         this.game = game;
         this.map = new ConcurrentHashMap<>();
+        this.requests = new ConcurrentHashMap<>();
     }
 
     public List<Agent> getAgents() {
@@ -90,6 +88,13 @@ public class Board implements EventListener {
         Box box = getBoxDirected(dir, old);
         map.replace(move.getAgent(), box);
         agent.setTerminal(agent.getXFinal() == box.getX() && agent.getYFinal() == box.getY());
+
+        for(Box b : map.values()) {
+            if(b.equals(box)) continue;
+            if(b.getX() == box.getX() && b.getY() == box.getY()) {
+                throw new Exception("Collision detected");
+            }
+        }
     }
 
     public Box getBoxDirected(Direction dir, Box old) {
@@ -101,13 +106,6 @@ public class Board implements EventListener {
             case RIGHT -> box = new Box(old.getX() + 1, old.getY());
         }
         return box;
-    }
-
-    public Direction getBestDirection(Agent agent) {
-        Box box = map.get(agent);
-        Map<Box, Direction> neighbors = getAllNeighbors(box);
-        return neighbors.get(neighbors.keySet().stream()
-                .min(Box::distance).orElseThrow());
     }
 
     public Box getPosition(Agent agent) {
@@ -131,6 +129,54 @@ public class Board implements EventListener {
             return Integer.compare(d1, d2);
         }).orElseThrow().getDir();
     }
+
+    /**
+     * Méthodes pour la map requests (boite aux lettres de Agent2)
+     */
+
+    public Direction getBestDirection(Agent agent) {
+        Box box = map.get(agent);
+        Map<Box, Direction> neighbors = getAllNeighbors(box);
+        return neighbors.get(neighbors.keySet().stream()
+                        .min(Comparator.comparingDouble(b -> b.distance(new Box(agent.getXFinal(), agent.getYFinal()))))
+                        .orElseThrow());
+    }
+
+    public Direction getRandomEmptyDirection(Agent agent) {
+        Box box = map.get(agent);
+        Map<Box, Direction> neighbors = getAllNeighbors(box);
+        Box random = neighbors.keySet().stream()
+                .filter(b -> !map.containsValue(b))
+                .skip(new Random().nextInt(neighbors.size()))
+                .findFirst()
+                .orElse(null);
+        return neighbors.getOrDefault(random, Direction.NONE);
+    }
+
+    public void initRequestAgent(Agent agent) {
+        requests.put(agent, new ConcurrentLinkedQueue<>());
+        System.out.println("Agent " + agent.getName() + " initialized");
+    }
+
+    /**
+     * Retourne la requête la plus ancienne de l'agent
+     * => L'agent est forcément dans les clés puisqu'il est init avant
+     * @param agent
+     * @param request
+     */
+    public void addRequest(Agent agent, Request request) {
+        if(!requests.containsKey(agent))
+            initRequestAgent(agent);
+        requests.get(agent).add(request);
+    }
+
+    public Queue<Request> getRequests(Agent agent) {
+        return requests.get(agent);
+    }
+
+    /**
+     * FIN
+     */
 
     @Override
     public void onEventOccured(Event event) {

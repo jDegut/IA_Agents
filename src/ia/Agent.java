@@ -3,11 +3,7 @@ package ia;
 import event.EventListener;
 import game.Move;
 
-import java.util.List;
-
 public abstract class Agent implements Runnable {
-
-	public static final List<String> AGENT_LABELS = List.of("A", "B", "C", "D", "E", "F", "G", "H", "I", "J");
 
 	private static int idCounter = 0;
 	private final int id;

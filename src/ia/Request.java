@@ -2,16 +2,24 @@ package ia;
 
 public class Request {
 
-	private final Agent2 agent;
-	private boolean processed;
+	private final Agent sender;
+	private boolean accepted;
 
-	public Request(Agent2 agent) {
-		this.agent = agent;
-		this.processed = false;
+	public Request(Agent sender) {
+		this.sender = sender;
+		this.accepted = false;
 	}
 
-	public void setProcessed(boolean processed) {
-		this.processed = processed;
+    public Agent getSender() {
+        return sender;
+    }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted() {
+		this.accepted = true;
 	}
 
 }

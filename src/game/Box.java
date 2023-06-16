@@ -2,7 +2,7 @@ package game;
 
 import java.util.Objects;
 
-public class Box {
+public class Box{
     private final int x;
     private final int y;
 
@@ -27,8 +27,12 @@ public class Box {
         return y;
     }
 
-    public int distance(Box box) {
-        return Math.abs(getX() - box.getX()) + Math.abs(getY() - box.getY());
+//    public int distance(Box b) {
+//        return Math.abs(x - b.x) + Math.abs(y - b.y);
+//    }
+
+    public int distance(Box b) {
+        return (int) Math.sqrt(Math.pow(x - b.x, 2) + Math.pow(y - b.y, 2));
     }
 
     @Override
@@ -42,5 +46,4 @@ public class Box {
                 "x=" + x + ", " +
                 "y=" + y + ']';
     }
-
 }

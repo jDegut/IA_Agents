@@ -1,8 +1,8 @@
 package game;
 
 import ia.Agent;
-import ia.Agent1;
-import ia.Agent2;
+import ia.CommunicativeAgent;
+import ia.NaiveAgent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,15 +13,23 @@ import java.util.concurrent.Executors;
 public class Game extends JFrame {
 
     private static final List<Agent> AGENTS = List.of(
-//            new Agent1("A", 0, 0),
-//            new Agent1("B", 0, 4)
-            new Agent2("A", 0, 0),
-            new Agent2("B", 0, 4)
+//            new NaiveAgent("A", 1, 3),
+//            new NaiveAgent("B", 3, 3),
+//            new NaiveAgent("C", 0, 0),
+//            new NaiveAgent("D", 4, 1)
+            new CommunicativeAgent("A", 0, 4),
+            new CommunicativeAgent("B", 2, 0),
+            new CommunicativeAgent("C", 2, 2),
+            new CommunicativeAgent("D", 4, 2),
+            new CommunicativeAgent("E", 0, 3)
     );
 
     private static final List<Box> BOXES = List.of(
-            new Box(0, 4),
-            new Box(0, 0)
+            new Box(0, 2),
+            new Box(1, 0),
+            new Box(1, 3),
+            new Box(1, 1),
+            new Box(3, 2)
     );
     private static final int CELL_SIZE = 100;
 
@@ -109,7 +117,7 @@ public class Game extends JFrame {
     }
 
     private Color getLabelColor(Agent agent) {
-        List<Color> colors = List.of(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.MAGENTA, Color.CYAN);
+        List<Color> colors = List.of(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.DARK_GRAY, Color.ORANGE, Color.PINK);
         return colors.get(agent.getId() % colors.size());
     }
 

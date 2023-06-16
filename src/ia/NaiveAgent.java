@@ -4,9 +4,9 @@ import game.Board;
 import game.Box;
 import game.Direction;
 import game.Move;
-public class Agent1 extends Agent {
+public class NaiveAgent extends Agent {
 
-    public Agent1(String name, int xFinal, int yFinal) {
+    public NaiveAgent(String name, int xFinal, int yFinal) {
         super(name, xFinal, yFinal);
     }
 
